@@ -25,7 +25,7 @@ Copyright © 3rabDev - https://3rabdev.online
 Requires Python 3.10+.
 
 ```bash
-pip install secretsieve        # from PyPI (once released)
+pip install secretsieve        # from PyPI
 pipx install secretsieve       # isolated CLI install (recommended)
 pip install -e .               # from source (developers)
 ```
