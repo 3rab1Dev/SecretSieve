@@ -1,0 +1,70 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://3rabdev.online/secretsieve/schemas/report-v1.json",
+  "title": "SecretSieve JSON report (schema v1)",
+  "description": "Machine-readable scan report. Additive-only changes within major version 1. Raw secret values never appear; only redacted previews and value hashes.",
+  "type": "object",
+  "required": ["tool", "version", "schema_version", "scan_root", "started_at", "duration_ms", "stats", "findings", "config_snapshot", "warnings", "exit_code"],
+  "properties": {
+    "tool": {"const": "secretsieve"},
+    "version": {"type": "string"},
+    "schema_version": {"const": 1},
+    "scan_root": {"type": "string"},
+    "started_at": {"type": "string"},
+    "duration_ms": {"type": "integer", "minimum": 0},
+    "stats": {
+      "type": "object",
+      "required": ["files_scanned", "files_skipped", "skip_breakdown", "files_errored", "candidates", "suppressed", "truncated_files"],
+      "properties": {
+        "files_scanned": {"type": "integer", "minimum": 0},
+        "files_skipped": {"type": "integer", "minimum": 0},
+        "skip_breakdown": {
+          "type": "object",
+          "required": ["binary", "excluded", "oversize", "extension"],
+          "properties": {
+            "binary": {"type": "integer", "minimum": 0},
+            "excluded": {"type": "integer", "minimum": 0},
+            "oversize": {"type": "integer", "minimum": 0},
+            "extension": {"type": "integer", "minimum": 0}
+          }
+        },
+        "files_errored": {"type": "integer", "minimum": 0},
+        "candidates": {"type": "integer", "minimum": 0},
+        "suppressed": {"type": "object", "additionalProperties": {"type": "integer"}},
+        "truncated_files": {"type": "integer", "minimum": 0}
+      }
+    },
+    "findings": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["id", "fingerprint", "rule_id", "detector", "provider", "category", "severity", "confidence", "confidence_band", "path", "line", "column", "redacted", "value_hash", "reason", "reason_codes"],
+        "properties": {
+          "id": {"type": "string"},
+          "fingerprint": {"type": "string", "pattern": "^sha256:[0-9a-f]{32}$"},
+          "rule_id": {"type": "string", "pattern": "^SS-[A-Z0-9-]+-[0-9]{3}$"},
+          "detector": {"enum": ["signature", "generic"]},
+          "provider": {"type": "string"},
+          "category": {"type": "string"},
+          "severity": {"enum": ["CRITICAL", "HIGH", "MEDIUM", "LOW", "INFO"]},
+          "confidence": {"type": "integer", "minimum": 0, "maximum": 99},
+          "confidence_band": {"enum": ["very-high", "high", "medium", "low"]},
+          "path": {"type": "string"},
+          "line": {"type": "integer", "minimum": 1},
+          "column": {"type": "integer", "minimum": 1},
+          "end_column": {"type": ["integer", "null"]},
+          "redacted": {"type": "string"},
+          "value_hash": {"type": "string", "pattern": "^sha256:[0-9a-f]{64}$"},
+          "reason": {"type": "string"},
+          "reason_codes": {"type": "array", "items": {"type": "string"}},
+          "context_key": {"type": ["string", "null"]},
+          "generated": {"type": "boolean"},
+          "truncated": {"type": "boolean"}
+        }
+      }
+    },
+    "config_snapshot": {"type": "object"},
+    "warnings": {"type": "array", "items": {"type": "string"}},
+    "exit_code": {"enum": [0, 1, 2]}
+  }
+}
