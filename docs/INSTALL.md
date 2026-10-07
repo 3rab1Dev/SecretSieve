@@ -20,6 +20,6 @@ secretsieve rules --list
 ```
 
 Offline install: download the wheel once, then `pip install --no-index --find-links ./wheelhouse secretsieve`.
-Zero runtime dependencies — nothing else is fetched.
+Zero runtime dependencies - nothing else is fetched.
 
-> License: MIT — see `LICENSE` at the repo root. Copyright © 3rabDev.
+> License: MIT - see `LICENSE` at the repo root. Copyright © 3rabDev.

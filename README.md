@@ -12,7 +12,7 @@ not just regex.
 
 Copyright © 3rabDev - https://3rabdev.online
 
-> License: MIT — see [LICENSE](LICENSE). Copyright © 3rabDev.
+> License: MIT - see [LICENSE](LICENSE). Copyright © 3rabDev.
 
 ## Privacy
 
