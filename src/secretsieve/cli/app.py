@@ -7,7 +7,6 @@ from __future__ import annotations
 
 import json
 import sys
-import traceback
 from pathlib import Path
 
 from secretsieve import __version__
@@ -60,29 +59,49 @@ def _execute_scan(args: object, targets: list[str]) -> int:
 
     scan_targets = list(targets)
     git_warnings: list[str] = []
+    staged_outcome: object = None
     if get(args, "staged", False) or get(args, "unstaged", False):
         from secretsieve import git as gitmod
+        from secretsieve.scanner.orchestrator import (
+            BlobInput,
+            merge_outcomes,
+            run_scan_blobs,
+        )
 
         cwd = Path.cwd()
-        selected: list[str] = []
+        outcomes = []
         try:
             if get(args, "staged", False):
-                selected += gitmod.get_staged_files(cwd)
+                # Index bytes are authoritative: blobs are read with
+                # ``git cat-file -p :<path>`` and never from the working tree,
+                # so partially staged files scan as staged, exclusively.
+                entries = gitmod.get_staged_entries(cwd)
+                if not entries:
+                    git_warnings.append("no staged files; nothing to scan")
+                else:
+                    blobs = [
+                        BlobInput(rel=e.path, content=gitmod.read_staged_blob(cwd, e.path))
+                        for e in entries
+                    ]
+                    outcomes.append(run_scan_blobs(blobs, cfg, cwd))
+                scan_targets = ["--staged"]
             if get(args, "unstaged", False):
-                selected += gitmod.get_unstaged_files(cwd)
+                selected = [p for p in dict.fromkeys(gitmod.get_unstaged_files(cwd)) if (cwd / p).exists()]
+                if not selected:
+                    git_warnings.append("no unstaged files; nothing to scan")
+                else:
+                    outcomes.append(run_scan(selected, cfg))
+                scan_targets = ["--staged", "--unstaged"] if get(args, "staged", False) else ["--unstaged"]
         except gitmod.GitError as exc:
             print(f"secretsieve: error: {exc}", file=sys.stderr)
             return 2
-        selected = [p for p in dict.fromkeys(selected) if (cwd / p).exists()]
-        if not selected:
-            git_warnings.append("git file list is empty; nothing to scan")
-        scan_targets = selected or []
-        if not scan_targets:
+        if not outcomes:
             # Still emit a valid (empty) report for CI stability.
             return _emit_empty(args, cfg, cfg_warnings + git_warnings)
+        staged_outcome = outcomes[0] if len(outcomes) == 1 else merge_outcomes(outcomes[0], outcomes[1])
 
     try:
-        outcome = run_scan(scan_targets or ["."], cfg)
+        outcome = staged_outcome if staged_outcome is not None else run_scan(scan_targets or ["."], cfg)
     except FileNotFoundError as exc:
         print(f"secretsieve: error: {exc}", file=sys.stderr)
         return 2
@@ -207,7 +226,7 @@ def _run_subcommand(argv: list[str]) -> int:
 
 
 def _cmd_rules(args: object) -> int:
-    from secretsieve.rules import RULE_REGISTRY, RULES_BY_ID
+    from secretsieve.rules import RULE_REGISTRY
     from secretsieve.utils.sanitize import sanitize_for_terminal
 
     if getattr(args, "list", False):

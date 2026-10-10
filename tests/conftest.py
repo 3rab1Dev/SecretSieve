@@ -2,8 +2,6 @@
 
 from __future__ import annotations
 
-import pytest
-
 FAKE_GITHUB_TOKEN = "ghp_9f8e7d6c5b4a3928174656f7a8b9c0d1e2f3"
 FAKE_AWS_KEY_ID = "AKIAIOSFODNN7T3STK3Y9"
 FAKE_AWS_SECRET = "wJalrXUtnFEMI/K7MDENG/bPxRfiCYWXYZ1234ab"

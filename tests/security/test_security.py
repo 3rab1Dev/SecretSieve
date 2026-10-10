@@ -43,7 +43,7 @@ def test_redaction_property_all_renderers(tmp_path, monkeypatch, capsys):
         assert raw not in human, raw[:12]
         assert raw not in blob, raw[:12]
         assert raw not in quiet, raw[:12]
-    report = json.loads(blob)
+    _report = json.loads(blob)  # must remain valid JSON
     assert "MIIE" not in blob
 
 

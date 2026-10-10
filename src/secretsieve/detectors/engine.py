@@ -426,7 +426,6 @@ def _evaluate_match(  # noqa: C901 - pipeline fan-out is intentional
 
     # --- entropy ----------------------------------------------------------
     entropy_res: EntropyResult | None = None
-    entropy_bonus_pts = 0
     if rule.entropy_profile != "none":
         if lockfile and rule.id in ENTROPY_REQUIRED:
             stats.note_suppressed("lockfile_entropy_off")
@@ -445,7 +444,6 @@ def _evaluate_match(  # noqa: C901 - pipeline fan-out is intentional
         if rule.id in ENTROPY_REQUIRED and not entropy_res.passed:
             stats.note_suppressed("entropy")
             return None
-        entropy_bonus_pts = entropy_res.bonus if entropy_res.passed else 0
         if entropy_res.passed and "high_entropy" not in reason_codes:
             reason_codes.append("high_entropy")
 

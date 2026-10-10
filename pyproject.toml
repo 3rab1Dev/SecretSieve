@@ -4,7 +4,7 @@ build-backend = "hatchling.build"
 
 [project]
 name = "secretsieve"
-version = "1.0.0"
+version = "1.0.1"
 description = "SecretSieve - intelligent local-first secret detection CLI. Sieve the secrets out of your source."
 readme = "README.md"
 authors = [{ name = "3rabDev", email = "hi@3rabdev.online" }]

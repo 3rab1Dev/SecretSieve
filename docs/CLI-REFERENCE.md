@@ -36,7 +36,7 @@ python -m secretsieve ...              # identical to the console script
 | `--include GLOB` | - | allowlist: only matching paths (repeatable) |
 | `--no-default-excludes` | off | drop default dir exclusions |
 | `--follow-symlinks` | off | follow directory symlinks |
-| `--staged` | off | scan git-index-staged files |
+| `--staged` | off | scan staged index blob contents (never working-tree bytes) |
 | `--unstaged` | off | scan tracked-modified + untracked files |
 | `--config PATH` | auto | explicit config file |
 | `--no-config` | off | ignore config files (hermetic CI) |

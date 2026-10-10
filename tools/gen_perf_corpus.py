@@ -13,7 +13,6 @@ from __future__ import annotations
 import argparse
 import random
 import string
-import sys
 import time
 from pathlib import Path
 

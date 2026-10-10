@@ -4,6 +4,21 @@ All notable changes to SecretSieve are recorded here. Versioning follows SemVer.
 Rule-loosening or threshold-lowering changes bump MINOR with a note; rule
 tightening (fewer false positives) bumps PATCH.
 
+## [1.0.1] - 2026-10-10
+
+### Fixed
+
+* Fixed `--staged` scanning to inspect Git index blob contents rather than working-tree contents.
+* Added regression coverage for partially staged files and other staged-index edge cases.
+
+Details:
+
+* `--staged` now reads each staged path with `git cat-file -p :<path>` plumbing (NUL-delimited status parsing, rename pairs, spaces in filenames). Partially staged files scan as staged, exclusively.
+* Staged deletions carry no index content and are skipped by design (no crash, no worktree fallback).
+* A missing or unreadable staged blob is an actionable exit-2 error; the scanner never silently falls back to working-tree bytes.
+* Staged blobs go through the same pipeline as disk scans: exclusions, binary/size gates, redaction, confidence/severity, deterministic ordering, JSON schema v1.
+* Removed dead code flagged by lint (unused imports/variables).
+
 ## [1.0.0] - 2026-10-07 - Released
 
 Initial stable release:

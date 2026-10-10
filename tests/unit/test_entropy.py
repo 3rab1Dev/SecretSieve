@@ -1,7 +1,5 @@
 """Unit: Shannon entropy vectors, encoding guesses, thresholds, margins."""
 
-import math
-
 from secretsieve.detectors import entropy as ent
 
 

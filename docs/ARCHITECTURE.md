@@ -22,7 +22,7 @@ argv -> parser -> config merge -> discovery -> gating/reading
 | `rules/` | one module per provider family exporting `RULES`; explicit registry, no magic imports | models |
 | `models/` | frozen `Rule`, `Finding` (+fingerprint/sort), `Config`, `ScanStats` | utils |
 | `reporting/` | human + JSON renderers (redacted only) | models, utils |
-| `git/` | local `git diff` file lists for `--staged/--unstaged` (stdlib subprocess) | - |
+| `git/` | index-blob reads (`:<path>` plumbing) for `--staged`, worktree file lists for `--unstaged` (stdlib subprocess) | - |
 | `utils/` | redact, terminal sanitize, paths/globs, timing | - |
 
 Key invariants:
